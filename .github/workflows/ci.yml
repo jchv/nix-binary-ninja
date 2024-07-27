@@ -22,11 +22,11 @@ jobs:
           ignore-missing-flake-lock: false
           fail-mode: true
       - name: Determine current version
-        run: echo "BN_PREV_VERSION=$(nix eval .#binary-ninja-free.version --raw)" >> $GITHUB_ENV
+        run: echo "BN_PREV_VERSION=$(nix eval .#version.x86_64-linux --raw)" >> $GITHUB_ENV
       - name: Update hashes.js
         run: wget -O hashes.js https://binary.ninja/js/hashes.js
       - name: Determine new version
-        run: echo "BN_NEXT_VERSION=$(nix eval .#binary-ninja-free.version --raw)" >> $GITHUB_ENV
+        run: echo "BN_NEXT_VERSION=$(nix eval .#version.x86_64-linux --raw)" >> $GITHUB_ENV
       - name: Run `nix build`
         run: nix build
       - name: Commit updated version

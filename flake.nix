@@ -23,6 +23,7 @@
         };
       in
       {
+        inherit (sources) version;
         inherit packages;
       }
     );

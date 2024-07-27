@@ -3,7 +3,6 @@
   callPackage,
   autoPatchelfHook,
   makeWrapper,
-  requireFile,
   unzip,
   libGL,
   glib,
