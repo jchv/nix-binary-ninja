@@ -1,0 +1,21 @@
+name: Pull Request CI
+
+on:
+  pull_request:
+
+jobs:
+  check:
+    runs-on: ubuntu-24.04
+    permissions:
+      id-token: "write"
+      contents: "read"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: DeterminateSystems/nix-installer-action@v11
+      - uses: DeterminateSystems/magic-nix-cache-action@v6
+      - uses: DeterminateSystems/flake-checker-action@v7
+        with:
+          ignore-missing-flake-lock: false
+          fail-mode: true
+      - name: Run `nix build`
+        run: nix build

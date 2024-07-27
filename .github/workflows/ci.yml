@@ -1,0 +1,37 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - master
+  workflow_dispatch:
+  schedule:
+    - cron: '30 13 * * *'
+
+jobs:
+  check:
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: "write"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: DeterminateSystems/nix-installer-action@v11
+      - uses: DeterminateSystems/magic-nix-cache-action@v6
+      - uses: DeterminateSystems/flake-checker-action@v7
+        with:
+          ignore-missing-flake-lock: false
+          fail-mode: true
+      - name: Determine current version
+        run: echo "BN_PREV_VERSION=$(nix eval .#binary-ninja-free.version --raw)" >> $GITHUB_ENV
+      - name: Update hashes.js
+        run: wget -O hashes.js https://binary.ninja/js/hashes.js
+      - name: Determine new version
+        run: echo "BN_NEXT_VERSION=$(nix eval .#binary-ninja-free.version --raw)" >> $GITHUB_ENV
+      - name: Run `nix build`
+        run: nix build
+      - name: Commit updated version
+        run: |-
+          git config --global user.email "noreply@localhost"
+          git config --global user.name "Binary Ninja Update"
+          git diff --quiet || git commit -m "binary-ninja: $BN_PREV_VERSION -> $BN_NEXT_VERSION" hashes.js
+          git push
