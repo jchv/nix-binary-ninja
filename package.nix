@@ -1,4 +1,5 @@
 {
+  lib,
   stdenv,
   callPackage,
   autoPatchelfHook,
@@ -51,6 +52,7 @@ stdenv.mkDerivation {
     wayland-scanner.out
   ];
   pythonDeps = [ python3.pkgs.pip ];
+  appendRunpaths = [ "${lib.getLib python3}/lib" ];
   buildPhase = ":";
   installPhase = ''
     runHook preInstall
@@ -61,7 +63,6 @@ stdenv.mkDerivation {
     chmod +x $out/opt/binaryninja
     buildPythonPath "$pythonDeps"
     makeWrapper $out/opt/binaryninja $out/bin/binaryninja \
-      --prefix LD_LIBRARY_PATH : "${python3}/lib" \
       --prefix PYTHONPATH : "$program_PYTHONPATH" \
       "''${qtWrapperArgs[@]}"
 
