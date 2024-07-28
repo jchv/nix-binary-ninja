@@ -12,6 +12,7 @@
   libxkbcommon,
   wayland-scanner,
   kdePackages,
+  python3,
 
   binaryNinjaEdition ? "personal",
 }:
@@ -27,9 +28,11 @@ in
 stdenv.mkDerivation {
   pname = "binary-ninja";
   inherit (sources) version;
+  src = source;
   nativeBuildInputs = [
     makeWrapper
     autoPatchelfHook
+    python3.pkgs.wrapPython
     kdePackages.wrapQtAppsHook
   ];
   buildInputs = [
@@ -47,7 +50,7 @@ stdenv.mkDerivation {
     dbus
     wayland-scanner.out
   ];
-  src = source;
+  pythonDeps = [ python3.pkgs.pip ];
   buildPhase = ":";
   installPhase = ''
     runHook preInstall
@@ -56,7 +59,10 @@ stdenv.mkDerivation {
     mkdir -p $out/opt
     cp -r * $out/opt
     chmod +x $out/opt/binaryninja
+    buildPythonPath "$pythonDeps"
     makeWrapper $out/opt/binaryninja $out/bin/binaryninja \
+      --prefix LD_LIBRARY_PATH : "${python3}/lib" \
+      --prefix PYTHONPATH : "$program_PYTHONPATH" \
       "''${qtWrapperArgs[@]}"
 
     runHook postInstall
