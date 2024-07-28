@@ -9,7 +9,6 @@
   fontconfig,
   xorg,
   dbus,
-  xkeyboard_config,
   libxkbcommon,
   wayland-scanner,
   kdePackages,
@@ -57,10 +56,13 @@ stdenv.mkDerivation {
     mkdir -p $out/opt
     cp -r * $out/opt
     chmod +x $out/opt/binaryninja
-    makeWrapper $out/opt/binaryninja \
-          $out/bin/binaryninja \
-          --prefix "QT_XKB_CONFIG_ROOT" ":" "${xkeyboard_config}/share/X11/xkb"
+    makeWrapper $out/opt/binaryninja $out/bin/binaryninja \
+      "''${qtWrapperArgs[@]}"
 
     runHook postInstall
   '';
+  dontWrapQtApps = true;
+  meta = {
+    mainProgram = "binaryninja";
+  };
 }
