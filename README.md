@@ -4,6 +4,27 @@ This is an unofficial, experimental Nix flake for running Binary Ninja on NixOS.
 More testing is needed; currently only `x86-64_linux` is tested, and only a bit.
 Additionally, more variants (e.g. an FHS variant) might be desirable.
 
+## Packages
+The following package attributes are available:
+
+- `binary-ninja-free`
+- `binary-ninja-personal`
+- `binary-ninja-commercial`
+- `binary-ninja-enterprise`
+- `binary-ninja-free-wayland`
+- `binary-ninja-personal-wayland`
+- `binary-ninja-commercial-wayland`
+- `binary-ninja-enterprise-wayland`
+
+For the free version, please see the License section.
+
+For other versions, note that you will need to provide the latest installer.
+
+The `-wayland` variants will force Binary Ninja to use the Wayland window
+system. This comes with some caveats and is not recommended under Gnome. See the
+[Binary Ninja troubleshooting section on Wayland](https://docs.binary.ninja/guide/troubleshooting.html#wayland)
+for more information.
+
 ## License
 
 ### Binary Ninja
