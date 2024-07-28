@@ -18,9 +18,11 @@
           name = "binary-ninja-${binaryNinjaEdition}";
           value = pkgs.callPackage ./package.nix { inherit binaryNinjaEdition; };
         }) sources.editions;
-        packages = editions // {
-          default = editions.binary-ninja-free;
-        };
+        editionsWayland = lib.mapAttrs' (name: value: {
+          name = "${name}-wayland";
+          value = value.override { forceWayland = true; };
+        }) editions;
+        packages = editions // editionsWayland // { default = editions.binary-ninja-free; };
       in
       {
         inherit (sources) version;

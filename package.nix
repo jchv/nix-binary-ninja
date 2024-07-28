@@ -16,6 +16,7 @@
   python3,
 
   binaryNinjaEdition ? "personal",
+  forceWayland ? false,
 }:
 let
   sources = callPackage ./sources.nix { };
@@ -53,6 +54,11 @@ stdenv.mkDerivation {
   ];
   pythonDeps = [ python3.pkgs.pip ];
   appendRunpaths = [ "${lib.getLib python3}/lib" ];
+  qtWrapperArgs = lib.optionals forceWayland [
+    "--set"
+    "QT_QPA_PLATFORM"
+    "wayland"
+  ];
   buildPhase = ":";
   installPhase = ''
     runHook preInstall
