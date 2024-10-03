@@ -11,7 +11,7 @@
   xorg,
   dbus,
   libxkbcommon,
-  wayland-scanner,
+  wayland,
   kdePackages,
   python3,
 
@@ -50,7 +50,7 @@ stdenv.mkDerivation {
     kdePackages.qtdeclarative
     libxkbcommon
     dbus
-    wayland-scanner.out
+    wayland
   ];
   pythonDeps = [ python3.pkgs.pip ];
   appendRunpaths = [ "${lib.getLib python3}/lib" ];
