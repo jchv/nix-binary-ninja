@@ -14,6 +14,7 @@
   wayland,
   kdePackages,
   python3,
+  nixpkgs,
 
   binaryNinjaEdition ? "personal",
   forceWayland ? false,
@@ -78,4 +79,13 @@ stdenv.mkDerivation {
   meta = {
     mainProgram = "binaryninja";
   };
+  desktopItems = [
+    (lib.makeDesktopItem {
+      name = "Binary Ninja";
+      exec = "binaryninja";
+      desktopName = "Binary Ninja";
+      comment = "Binary Ninja is an interactive decompiler, disassembler, debugger, and binary analysis platform built by reverse engineers, for reverse engineers";
+      categories = [ "Development" ];
+    })
+  ];
 }
