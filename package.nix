@@ -14,7 +14,6 @@
   wayland,
   kdePackages,
   python3,
-  nixpkgs,
 
   binaryNinjaEdition ? "personal",
   forceWayland ? false,
