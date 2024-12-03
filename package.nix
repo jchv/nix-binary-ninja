@@ -2,8 +2,11 @@
   lib,
   stdenv,
   callPackage,
+  fetchurl,
   autoPatchelfHook,
   makeWrapper,
+  makeDesktopItem,
+  copyDesktopItems,
   unzip,
   libGL,
   glib,
@@ -26,6 +29,10 @@ let
       platformSources.${stdenv.hostPlatform.system}
     else
       throw "No source for system ${stdenv.hostPlatform.system}";
+  desktopItem = fetchurl {
+    url = "https://docs.binary.ninja/img/logo.png";
+    hash = "sha256-TzGAAefTknnOBj70IHe64D6VwRKqIDpL4+o9kTw0Mn4=";
+  };
 in
 stdenv.mkDerivation {
   pname = "binary-ninja";
@@ -36,6 +43,7 @@ stdenv.mkDerivation {
     autoPatchelfHook
     python3.pkgs.wrapPython
     kdePackages.wrapQtAppsHook
+    copyDesktopItems
   ];
   buildInputs = [
     unzip
@@ -60,12 +68,26 @@ stdenv.mkDerivation {
     "wayland"
   ];
   buildPhase = ":";
+
+  desktopItems = [
+    (makeDesktopItem {
+      name = "Binary Ninja";
+      exec = "binaryninja";
+      icon = "binaryninja";
+      desktopName = "Binary Ninja";
+      comment = "Binary Ninja is an interactive decompiler, disassembler, debugger, and binary analysis platform built by reverse engineers, for reverse engineers";
+      categories = [ "Development" ];
+    })
+  ];
+
   installPhase = ''
     runHook preInstall
 
     mkdir -p $out/bin
     mkdir -p $out/opt
+    mkdir -p $out/share/pixmaps
     cp -r * $out/opt
+    cp ${desktopItem} $out/share/pixmaps/binaryninja.png
     chmod +x $out/opt/binaryninja
     buildPythonPath "$pythonDeps"
     makeWrapper $out/opt/binaryninja $out/bin/binaryninja \
