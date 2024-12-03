@@ -4,6 +4,28 @@ This is an unofficial, experimental Nix flake for running Binary Ninja on NixOS.
 More testing is needed; currently only `x86-64_linux` is tested, and only a bit.
 Additionally, more variants (e.g. an FHS variant) might be desirable.
 
+## Usage
+1. Include the flake in you nix configuration
+    ```nix
+    binaryninja = {
+        url = "github:jchv/nix-binary-ninja";
+        inputs.nixpkgs.follows = "nixpkgs";
+    };
+    ```
+    - also include the flake input as an argument to your `outputs`
+2. Include the installer in the nix-store, if not using the free version
+    ```bash
+    nix-store --add-fixed sha256 <path-to-installer>.zip
+    ```
+    - You can get a copy of the latest release using your registered e-mail address [here](https://binary.ninja/recover/).
+3. Include the appropriate package edition from the [Packages section](#Packages) in your packages
+    ```nix
+	environment.systemPackages = with pkgs; [
+		binaryninja.packages.${pkgs.system}.<package-attribute>
+	];
+    ```
+    - replace `<package-attribute>` with your chosen edition
+
 ## Packages
 The following package attributes are available:
 
