@@ -17,6 +17,7 @@ Additionally, more variants (e.g. an FHS variant) might be desirable.
     ```bash
     nix-store --add-fixed sha256 <path-to-installer>.zip
     ```
+    - You can get a copy of the latest release using your registered e-mail address [here](https://binary.ninja/recover/).
 3. Include the appropriate package edition from the [Packages section](#Packages) in your packages
     ```nix
 	environment.systemPackages = with pkgs; [
