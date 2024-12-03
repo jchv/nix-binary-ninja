@@ -29,7 +29,7 @@ let
       platformSources.${stdenv.hostPlatform.system}
     else
       throw "No source for system ${stdenv.hostPlatform.system}";
-  desktopItem = fetchurl {
+  desktopIcon = fetchurl {
     url = "https://docs.binary.ninja/img/logo.png";
     hash = "sha256-TzGAAefTknnOBj70IHe64D6VwRKqIDpL4+o9kTw0Mn4=";
   };
@@ -87,7 +87,7 @@ stdenv.mkDerivation {
     mkdir -p $out/opt
     mkdir -p $out/share/pixmaps
     cp -r * $out/opt
-    cp ${desktopItem} $out/share/pixmaps/binaryninja.png
+    cp ${desktopIcon} $out/share/pixmaps/binaryninja.png
     chmod +x $out/opt/binaryninja
     buildPythonPath "$pythonDeps"
     makeWrapper $out/opt/binaryninja $out/bin/binaryninja \
