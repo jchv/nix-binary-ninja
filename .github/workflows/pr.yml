@@ -19,3 +19,5 @@ jobs:
           fail-mode: true
       - name: Run `nix build`
         run: nix build
+      - name: Run `nix flake check`
+        run: nix flake check

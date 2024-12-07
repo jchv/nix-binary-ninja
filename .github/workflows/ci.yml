@@ -6,7 +6,7 @@ on:
       - master
   workflow_dispatch:
   schedule:
-    - cron: '30 13 * * *'
+    - cron: "30 13 * * *"
 
 jobs:
   check:
@@ -29,6 +29,8 @@ jobs:
         run: echo "BN_NEXT_VERSION=$(nix eval .#version.x86_64-linux --raw)" >> $GITHUB_ENV
       - name: Run `nix build`
         run: nix build
+      - name: Run `nix flake check`
+        run: nix flake check
       - name: Commit updated version
         run: |-
           git config --global user.email "noreply@localhost"

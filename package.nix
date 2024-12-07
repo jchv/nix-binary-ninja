@@ -20,12 +20,15 @@
 
   binaryNinjaEdition ? "personal",
   forceWayland ? false,
+  overrideSource ? null,
 }:
 let
   sources = callPackage ./sources.nix { };
   platformSources = sources.editions.${binaryNinjaEdition};
   source =
-    if builtins.hasAttr stdenv.hostPlatform.system platformSources then
+    if overrideSource != null then
+      overrideSource
+    else if builtins.hasAttr stdenv.hostPlatform.system platformSources then
       platformSources.${stdenv.hostPlatform.system}
     else
       throw "No source for system ${stdenv.hostPlatform.system}";

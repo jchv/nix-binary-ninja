@@ -2,6 +2,7 @@
   lib,
   requireFile,
   fetchurl,
+  ...
 }:
 let
   data = builtins.fromJSON (builtins.readFile ./hashes.js);
@@ -10,7 +11,7 @@ let
     "free"
     "personal"
     "commercial"
-    "enterprise"
+    "ultimate"
   ];
   mkFreeSource =
     name:
