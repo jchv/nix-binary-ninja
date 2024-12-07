@@ -30,7 +30,7 @@ For a list of available package attributes, see the [Packages section](#Packages
 
 To include Binary Ninja in your NixOS system using this flake, follow these steps:
 
- 1. Add this flake to your NixOS configuration flake's inputs:
+ 1. **Add this flake to your NixOS configuration flake's inputs:**
 
     ```nix
     {
@@ -47,7 +47,7 @@ To include Binary Ninja in your NixOS system using this flake, follow these step
       };
     ```
 
- 2. Include the NixOS module in your NixOS system:
+ 2. **Include the NixOS module in your NixOS system:**
 
     ```nix
     {
@@ -71,7 +71,9 @@ To include Binary Ninja in your NixOS system using this flake, follow these step
 
     This will add new options you can use in your NixOS configuration.
 
- 3. Enable Binary Ninja in your NixOS configuration:
+ 3. **Enable Binary Ninja in your NixOS configuration:**
+
+    This can go in any NixOS configuration module imported by your configuration:
 
     ```nix
     {
@@ -90,7 +92,9 @@ To include Binary Ninja in your NixOS system using this flake, follow these step
     }
     ```
 
- 4. Add the installer to the nix-store, if not using the free version:
+    For a list of available package attributes, see the [Packages section](#Packages).
+
+ 4. **Add the installer to the nix-store, if not using the free version:**
 
     ```bash
     nix-store --add-fixed sha256 <path-to-installer>.zip
