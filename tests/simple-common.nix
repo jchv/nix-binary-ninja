@@ -6,7 +6,7 @@ pkgs.nixosTest {
   testScript =
     { nodes, ... }:
     let
-      user = nodes.machine.config.users.users.alice;
+      user = nodes.machine.users.users.alice;
     in
     ''
       machine.wait_for_x()
