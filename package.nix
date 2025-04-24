@@ -59,6 +59,7 @@ stdenv.mkDerivation {
     xorg.xcbutilrenderutil
     kdePackages.qtbase
     kdePackages.qtdeclarative
+    kdePackages.qtwayland
     libxkbcommon
     dbus
     wayland
@@ -87,13 +88,14 @@ stdenv.mkDerivation {
     runHook preInstall
 
     mkdir -p $out/bin
-    mkdir -p $out/opt
+    mkdir -p $out/opt/binaryninja
     mkdir -p $out/share/pixmaps
-    cp -r * $out/opt
+    cp -r * $out/opt/binaryninja
+    rm $out/opt/binaryninja/*.so.*
     cp ${desktopIcon} $out/share/pixmaps/binaryninja.png
-    chmod +x $out/opt/binaryninja
+    chmod +x $out/opt/binaryninja/binaryninja
     buildPythonPath "$pythonDeps"
-    makeWrapper $out/opt/binaryninja $out/bin/binaryninja \
+    makeWrapper $out/opt/binaryninja/binaryninja $out/bin/binaryninja \
       --prefix PYTHONPATH : "$program_PYTHONPATH" \
       "''${qtWrapperArgs[@]}"
 

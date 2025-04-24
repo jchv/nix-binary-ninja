@@ -27,11 +27,10 @@ let
       sha256 = data.hashes.${name};
     };
   mkEditionNames = edition: {
-    aarch64-darwin = "binaryninja_${edition}_macosx.dmg";
-    aarch64-linux = "binaryninja_${edition}_linux_arm.zip";
-    x86_64-darwin = "binaryninja_${edition}_macosx.dmg";
-    x86_64-linux = "binaryninja_${edition}_linux.zip";
-    x86_64-windows = "binaryninja_${edition}_win64.exe";
+    aarch64-darwin = "binaryninja_macosx_stable_${edition}.dmg";
+    aarch64-linux = "binaryninja_linux-arm_stable_${edition}.zip";
+    x86_64-linux = "binaryninja_linux_stable_${edition}.zip";
+    x86_64-windows = "binaryninja_win64_stable_${edition}.zip";
   };
 in
 {
