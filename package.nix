@@ -91,7 +91,15 @@ stdenv.mkDerivation {
     mkdir -p $out/opt/binaryninja
     mkdir -p $out/share/pixmaps
     cp -r * $out/opt/binaryninja
-    rm $out/opt/binaryninja/*.so.*
+    find $out/opt/binaryninja \
+      -type f \
+      -name '*.so.*' \
+      -not -name 'libbinaryninjacore.so.*' \
+      -not -name 'libbinaryninjaui.so.*' \
+      -not -name 'liblldb.so.*' \
+      -not -name 'libshiboken6.abi*.so.*' \
+      -not -name 'libpyside6.abi*.so.*' \
+      -delete
     cp ${desktopIcon} $out/share/pixmaps/binaryninja.png
     chmod +x $out/opt/binaryninja/binaryninja
     buildPythonPath "$pythonDeps"
