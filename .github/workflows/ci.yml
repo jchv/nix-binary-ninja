@@ -16,7 +16,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: DeterminateSystems/nix-installer-action@v11
-      - uses: DeterminateSystems/magic-nix-cache-action@v6
       - uses: DeterminateSystems/flake-checker-action@v7
         with:
           ignore-missing-flake-lock: false
