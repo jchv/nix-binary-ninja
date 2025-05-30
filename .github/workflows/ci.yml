@@ -15,8 +15,8 @@ jobs:
       contents: "write"
     steps:
       - uses: actions/checkout@v4
-      - uses: DeterminateSystems/nix-installer-action@v11
-      - uses: DeterminateSystems/flake-checker-action@v7
+      - uses: DeterminateSystems/nix-installer-action@v17
+      - uses: DeterminateSystems/flake-checker-action@v10
         with:
           ignore-missing-flake-lock: false
           fail-mode: true
