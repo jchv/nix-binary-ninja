@@ -1,0 +1,30 @@
+name: Nix Flake Update
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 0 * * 0"
+
+jobs:
+  nix-flake-update:
+    name: "Nix Flake Update"
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: DeterminateSystems/determinate-nix-action@main
+      - name: Update Nix flake inputs
+        run: nix flake update
+      - name: Run `nix build`
+        run: nix build
+      - name: Run `nix flake check`
+        run: nix flake check
+      - name: Commit updated Nix flake
+        run: |-
+          git config --global user.email "noreply@localhost"
+          git config --global user.name "Binary Ninja Update"
+          if ! git diff --quiet; then
+            git commit -am "Update Nix flake inputs"
+            git push
+          fi
