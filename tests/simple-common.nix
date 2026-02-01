@@ -1,5 +1,5 @@
 { pkgs, nodes }:
-pkgs.nixosTest {
+pkgs.testers.nixosTest {
   inherit nodes;
   name = "binary-ninja-simple";
   enableOCR = true;
