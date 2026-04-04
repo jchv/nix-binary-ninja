@@ -12,7 +12,10 @@
   libGL,
   glib,
   fontconfig,
-  xorg,
+  libxi,
+  libxrender,
+  libxcb-image,
+  libxcb-render-util,
   dbus,
   libxkbcommon,
   wayland,
@@ -56,10 +59,10 @@ stdenv.mkDerivation {
     libGL
     glib
     fontconfig
-    xorg.libXi
-    xorg.libXrender
-    xorg.xcbutilimage
-    xorg.xcbutilrenderutil
+    libxi
+    libxrender
+    libxcb-image
+    libxcb-render-util
     kdePackages.qtbase
     kdePackages.qtdeclarative
     kdePackages.qtwayland
