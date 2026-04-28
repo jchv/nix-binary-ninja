@@ -21,6 +21,8 @@ pkgs.testers.nixosTest {
         machine.sleep(1)
         machine.send_key("esc")
         machine.sleep(1)
+        machine.wait_for_window("Crash Reporting")
+        machine.send_key("ret")
 
       with subtest("Open /bin/sh and wait for disassembly"):
         machine.send_key("ctrl-l")

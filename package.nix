@@ -97,8 +97,8 @@ stdenv.mkDerivation {
     cp -r * $out/opt/binaryninja
     find $out/opt/binaryninja \
       -type f \
-      -name '*.so' \
-      -name '*.so.*' \
+      -name '*.so' -or -name '*.so.*' \
+      -not -name '*.bntl' \
       -not -name 'libbinaryninjacore.so.*' \
       -not -name 'libbinaryninjaui.so.*' \
       -not -name 'liblldb.so.*' \
