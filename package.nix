@@ -39,7 +39,7 @@ let
       throw "No source for system ${stdenv.hostPlatform.system}";
   desktopIcon = fetchurl {
     url = "https://docs.binary.ninja/img/logo.png";
-    hash = "sha256-TzGAAefTknnOBj70IHe64D6VwRKqIDpL4+o9kTw0Mn4=";
+    hash = "sha256-waXgwz9lSJ2zPahtqCP+ZdL5Ac6RZ4/pnz7iB4bTs4c=";
   };
 in
 stdenv.mkDerivation {
