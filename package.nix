@@ -20,7 +20,7 @@
   libxkbcommon,
   wayland,
   kdePackages,
-  python3,
+  python313,
   libxml2,
 
   binaryNinjaEdition ? "personal",
@@ -41,6 +41,7 @@ let
     url = "https://docs.binary.ninja/img/logo.png";
     hash = "sha256-waXgwz9lSJ2zPahtqCP+ZdL5Ac6RZ4/pnz7iB4bTs4c=";
   };
+  python3 = python313;
 in
 stdenv.mkDerivation {
   pname = "binary-ninja";
@@ -70,6 +71,7 @@ stdenv.mkDerivation {
     dbus
     wayland
     libxml2.out
+    python3
   ];
   pythonDeps = [ python3.pkgs.pip ];
   appendRunpaths = [ "${lib.getLib python3}/lib" ];
