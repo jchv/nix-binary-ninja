@@ -37,9 +37,8 @@ let
       platformSources.${stdenv.hostPlatform.system}
     else
       throw "No source for system ${stdenv.hostPlatform.system}";
-  desktopIcon = fetchurl {
-    url = "https://docs.binary.ninja/img/logo.png";
-    hash = "sha256-waXgwz9lSJ2zPahtqCP+ZdL5Ac6RZ4/pnz7iB4bTs4c=";
+  desktopIcon = builtins.path {
+    path = ./logo.png;
   };
   python3 = python313;
 in

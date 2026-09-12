@@ -25,6 +25,9 @@ jobs:
         run: echo "BN_PREV_VERSION=$(nix eval .#version.x86_64-linux --raw)" >> $GITHUB_ENV
       - name: Update hashes.js
         run: wget -O hashes.js https://binary.ninja/js/hashes.js
+      - name: Update logo.png
+        run: wget -O logo.png https://docs.binary.ninja/img/logo.png
+        continue-on-error: true
       - name: Determine new version
         run: echo "BN_NEXT_VERSION=$(nix eval .#version.x86_64-linux --raw)" >> $GITHUB_ENV
       - name: Run `nix build`
