@@ -23,7 +23,7 @@ let
     name:
     requireFile {
       inherit name;
-      url = "https://binary.ninja/recover/";
+      url = "https://portal.binary.ninja/licenses";
       sha256 = data.hashes.${name};
     };
   mkEditionNames =
