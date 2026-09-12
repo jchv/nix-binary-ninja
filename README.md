@@ -1,4 +1,5 @@
 # Nix flake for Binary Ninja
+
 This is an unofficial, experimental Nix flake for running Binary Ninja on NixOS.
 
 More testing is needed; currently only `x86-64_linux` is tested, and only a bit.
@@ -21,7 +22,7 @@ nix run github:jchv/nix-binary-ninja
 If you want to run a specific edition, you can select an attribute like so:
 
 ```console
-nix run github:jchv/nix-binary-ninja#binary-ninja-free-wayland
+nix run github:jchv/nix-binary-ninja#binary-ninja.bundled-qt.free
 ```
 
 For a list of available package attributes, see the [Packages section](#Packages).
@@ -30,7 +31,7 @@ For a list of available package attributes, see the [Packages section](#Packages
 
 To include Binary Ninja in your NixOS system using this flake, follow these steps:
 
- 1. **Add this flake to your NixOS configuration flake's inputs:**
+1.  **Add this flake to your NixOS configuration flake's inputs:**
 
     ```nix
     {
@@ -47,7 +48,7 @@ To include Binary Ninja in your NixOS system using this flake, follow these step
       };
     ```
 
- 2. **Include the NixOS module in your NixOS system:**
+2.  **Include the NixOS module in your NixOS system:**
 
     ```nix
     {
@@ -71,7 +72,7 @@ To include Binary Ninja in your NixOS system using this flake, follow these step
 
     This will add new options you can use in your NixOS configuration.
 
- 3. **Enable Binary Ninja in your NixOS configuration:**
+3.  **Enable Binary Ninja in your NixOS configuration:**
 
     This can go in any NixOS configuration module imported by your configuration:
 
@@ -94,7 +95,7 @@ To include Binary Ninja in your NixOS system using this flake, follow these step
 
     For a list of available package attributes, see the [Packages section](#Packages).
 
- 4. **Add the installer to the nix-store, if not using the free version:**
+4.  **Add the installer to the nix-store, if not using the free version:**
 
     ```bash
     nix-store --add-fixed sha256 <path-to-installer>.zip
@@ -121,16 +122,48 @@ To include Binary Ninja in your NixOS system using this flake, follow these step
     ```
 
 ## Packages
-The following package attributes are available:
 
-- `binary-ninja-free`
-- `binary-ninja-personal`
-- `binary-ninja-commercial`
-- `binary-ninja-ultimate`
-- `binary-ninja-free-wayland`
-- `binary-ninja-personal-wayland`
-- `binary-ninja-commercial-wayland`
-- `binary-ninja-ultimate-wayland`
+The following package sets are available:
+
+| Set                           | Qt libraries and plugins | Runtime           |
+| ----------------------------- | ------------------------ | ----------------- |
+| `binary-ninja.system-qt`      | Nixpkgs Qt               | Patched for NixOS |
+| `binary-ninja.bundled-qt`     | Binary Ninja's Qt        | Patched for NixOS |
+| `binary-ninja.bundled-qt-fhs` | Binary Ninja's Qt        | FHS environment   |
+
+Each set contains the following attributes:
+
+- `free`
+- `personal`
+- `commercial`
+- `ultimate`
+- `free-wayland`
+- `personal-wayland`
+- `commercial-wayland`
+- `ultimate-wayland`
+
+> [!TIP]
+> **How do I choose a variant?**
+> You probably should start with `bundled-qt`, but:
+>
+> - `system-qt` provides better integration with your desktop.
+> - `bundled-qt` provides better compatibility with Binary Ninja extensions.
+> - `bundled-qt-fhs` provides even more compatibility with extensions.
+>
+> `*-wayland` variants will try to use Wayland, which may still have some minor
+> issues in certain Wayland desktops. Most users can just use the normal variant
+> and rely on XWayland; you'll probably know if you need these variants.
+>
+> For legacy reasons, the unmarked attributes are `system-qt`.
+
+```nix
+programs.binary-ninja.package = pkgs.binary-ninja.bundled-qt.personal;
+```
+
+```console
+nix run github:jchv/nix-binary-ninja#binary-ninja.bundled-qt.free
+nix run github:jchv/nix-binary-ninja#binary-ninja.bundled-qt-fhs.free-wayland
+```
 
 For the free version, please see the License section.
 

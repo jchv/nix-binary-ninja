@@ -19,5 +19,7 @@ jobs:
           fail-mode: true
       - name: Run `nix build`
         run: nix build
+        timeout-minutes: 20
       - name: Run `nix flake check`
         run: nix flake check
+        timeout-minutes: 20

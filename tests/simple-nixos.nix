@@ -1,4 +1,8 @@
-{ self, pkgs }:
+{
+  self,
+  pkgs,
+  package ? pkgs.binary-ninja-free,
+}:
 pkgs.callPackage ./simple-common.nix {
   nodes.machine = {
     imports = [
@@ -10,6 +14,7 @@ pkgs.callPackage ./simple-common.nix {
     test-support.displayManager.auto.user = "alice";
     services.xserver.enable = true;
     programs.binary-ninja.enable = true;
+    programs.binary-ninja.package = package;
 
     system.stateVersion = "24.11";
   };
