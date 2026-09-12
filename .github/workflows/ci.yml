@@ -38,5 +38,5 @@ jobs:
         run: |-
           git config --global user.email "noreply@localhost"
           git config --global user.name "Binary Ninja Update"
-          git diff --quiet || git commit -m "binary-ninja: $BN_PREV_VERSION -> $BN_NEXT_VERSION" hashes.js
+          git diff --quiet || git commit -m "binary-ninja: $BN_PREV_VERSION -> $BN_NEXT_VERSION" hashes.js logo.png
           git push
