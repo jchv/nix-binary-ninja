@@ -17,10 +17,8 @@ pkgs.testers.nixosTest {
         machine.execute("su - alice -c 'xterm -e binaryninja' >&2 &")
         machine.wait_for_window("Binary Ninja Free")
         machine.send_key("ret")
-        machine.wait_for_window("Welcome to Binary Ninja")
+        machine.wait_for_text("Dark or light?")
         machine.send_key("esc")
-        machine.wait_for_window("Crash Reporting")
-        machine.send_key("ret")
         machine.sleep(2)
 
       with subtest("Open /bin/sh and wait for disassembly"):
