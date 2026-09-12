@@ -2,6 +2,7 @@
 pkgs.testers.nixosTest {
   inherit nodes;
   name = "binary-ninja-simple";
+  globalTimeout = 300;
   enableOCR = true;
   testScript =
     { nodes, ... }:

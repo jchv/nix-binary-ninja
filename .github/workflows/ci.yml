@@ -32,8 +32,10 @@ jobs:
         run: echo "BN_NEXT_VERSION=$(nix eval .#version.x86_64-linux --raw)" >> $GITHUB_ENV
       - name: Run `nix build`
         run: nix build
+        timeout-minutes: 20
       - name: Run `nix flake check`
         run: nix flake check
+        timeout-minutes: 20
       - name: Commit updated version
         run: |-
           git config --global user.email "noreply@localhost"

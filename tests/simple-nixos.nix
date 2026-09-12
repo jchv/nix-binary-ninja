@@ -11,6 +11,7 @@ pkgs.callPackage ./simple-common.nix {
       (self.inputs.nixpkgs + "/nixos/tests/common/user-account.nix")
     ];
 
+    virtualisation.memorySize = 768;
     test-support.displayManager.auto.user = "alice";
     services.xserver.enable = true;
     programs.binary-ninja.enable = true;
