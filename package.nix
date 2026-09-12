@@ -109,6 +109,7 @@ stdenv.mkDerivation {
       -not -name 'liblldb.so.*' \
       -not -name 'libshiboken6.abi*.so.*' \
       -not -name 'libpyside6.abi*.so.*' \
+      -not -name 'libpython3.*.so.*' \
       -delete
     cp ${desktopIcon} $out/share/pixmaps/binaryninja.png
     chmod +x $out/opt/binaryninja/binaryninja
