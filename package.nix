@@ -2,31 +2,43 @@
   lib,
   stdenv,
   callPackage,
-  fetchurl,
-  auto-patchelf,
   autoPatchelfHook,
+  buildFHSEnv,
   makeWrapper,
   makeDesktopItem,
   copyDesktopItems,
   unzip,
   libGL,
+  zlib,
+  freetype,
+  libx11,
+  libxcb,
   glib,
   fontconfig,
   libxi,
   libxrender,
   libxcb-image,
   libxcb-render-util,
+  libxcb-wm,
+  libxcb-keysyms,
+  libxcb-cursor,
   dbus,
   libxkbcommon,
   wayland,
   kdePackages,
   python313,
-  libxml2,
+  libxml2_13,
+  curl,
+  openssl,
+  libdrm,
 
   binaryNinjaEdition ? "personal",
   forceWayland ? false,
   overrideSource ? null,
+  useSystemQt ? true,
+  useFHS ? false,
 }:
+assert lib.assertMsg (!useFHS || !useSystemQt) "Can not use system Qt with FHS wrapper";
 let
   sources = callPackage ./sources.nix { };
   platformSources = sources.editions.${binaryNinjaEdition};
@@ -41,96 +53,132 @@ let
     path = ./logo.png;
   };
   python3 = python313;
-in
-stdenv.mkDerivation {
-  pname = "binary-ninja";
-  inherit (sources) version;
-  src = source;
-  nativeBuildInputs = [
-    makeWrapper
-    auto-patchelf
-    autoPatchelfHook
-    python3.pkgs.wrapPython
-    kdePackages.wrapQtAppsHook
-    copyDesktopItems
-  ];
-  buildInputs = [
-    unzip
+  runtimeLibraries = [
+    stdenv.cc.cc.lib
     libGL
+    zlib
+    freetype
+    libx11
+    libxcb
     glib
     fontconfig
     libxi
     libxrender
     libxcb-image
     libxcb-render-util
-    kdePackages.qtbase
-    kdePackages.qtdeclarative
-    kdePackages.qtwayland
+    libxcb-wm
+    libxcb-keysyms
+    libxcb-cursor
     libxkbcommon
     dbus
     wayland
-    libxml2.out
+    # LLDB needs the libxml2.so.2 ABI.
+    libxml2_13
+    curl
+    openssl
+    libdrm
     python3
   ];
-  pythonDeps = [ python3.pkgs.pip ];
-  appendRunpaths = [ "${lib.getLib python3}/lib" ];
-  qtWrapperArgs = lib.optionals forceWayland [
-    "--set"
-    "QT_QPA_PLATFORM"
-    "wayland"
-  ];
-  buildPhase = ":";
+  package = stdenv.mkDerivation {
+    pname = "binary-ninja-${binaryNinjaEdition}-${
+      if useSystemQt then "system-qt" else "bundled-qt"
+    }${lib.optionalString useFHS "-unwrapped"}";
+    inherit (sources) version;
+    src = source;
+    nativeBuildInputs = [
+      makeWrapper
+      python3.pkgs.wrapPython
+      copyDesktopItems
+      unzip
+    ]
+    ++ lib.optional (!useFHS) autoPatchelfHook
+    ++ lib.optional useSystemQt kdePackages.wrapQtAppsHook;
+    buildInputs =
+      lib.optionals (!useFHS) runtimeLibraries
+      ++ lib.optionals useSystemQt [
+        kdePackages.qtbase
+        kdePackages.qtdeclarative
+        kdePackages.qtwayland
+        kdePackages.qtsvg
+      ];
+    pythonDeps = [ python3.pkgs.pip ];
+    appendRunpaths = [ "${lib.getLib python3}/lib" ];
+    dontBuild = true;
+    dontStrip = true;
+    dontPatchELF = useFHS;
 
-  desktopItems = [
-    (makeDesktopItem {
-      name = "Binary Ninja";
-      exec = "binaryninja";
-      icon = "binaryninja";
-      desktopName = "Binary Ninja";
-      comment = "Binary Ninja is an interactive decompiler, disassembler, debugger, and binary analysis platform built by reverse engineers, for reverse engineers";
-      categories = [ "Development" ];
-    })
-  ];
+    desktopItems = [
+      (makeDesktopItem {
+        name = "Binary Ninja";
+        exec = "binaryninja";
+        icon = "binaryninja";
+        desktopName = "Binary Ninja";
+        comment = "Binary Ninja is an interactive decompiler, disassembler, debugger, and binary analysis platform built by reverse engineers, for reverse engineers";
+        categories = [ "Development" ];
+      })
+    ];
 
-  installPhase = ''
-    runHook preInstall
+    installPhase = ''
+      runHook preInstall
 
-    mkdir -p $out/bin
-    mkdir -p $out/opt/binaryninja
-    mkdir -p $out/share/pixmaps
-    cp -r * $out/opt/binaryninja
-    find $out/opt/binaryninja \
-      -type f \
-      -name '*.so' -or -name '*.so.*' \
-      -not -name '*.bntl' \
-      -not -name 'libbinaryninjacore.so.*' \
-      -not -name 'libbinaryninjaui.so.*' \
-      -not -name 'liblldb.so.*' \
-      -not -name 'libshiboken6.abi*.so.*' \
-      -not -name 'libpyside6.abi*.so.*' \
-      -not -name 'libpython3.*.so.*' \
-      -delete
-    cp ${desktopIcon} $out/share/pixmaps/binaryninja.png
-    chmod +x $out/opt/binaryninja/binaryninja
-    buildPythonPath "$pythonDeps"
-    makeWrapper $out/opt/binaryninja/binaryninja $out/bin/binaryninja \
-      --prefix PYTHONPATH : "$program_PYTHONPATH" \
-      "''${qtWrapperArgs[@]}"
+      mkdir -p $out/bin
+      mkdir -p $out/opt/binaryninja
+      mkdir -p $out/share/pixmaps
+      cp -a . $out/opt/binaryninja/
+      ${lib.optionalString useSystemQt ''
+        find "$out/opt/binaryninja" \( -type f -o -type l \) -name 'libQt6*.so*' -delete
+        rm -rf "$out/opt/binaryninja/qt"
+        rm -f "$out/opt/binaryninja/python3/PySide6/Qt/plugins"
+        rm -f "$out/opt/binaryninja/qt.conf"
+      ''}
+      ${lib.optionalString (!useFHS) ''
+        addAutoPatchelfSearchPath "$out/opt/binaryninja"
+      ''}
+      cp ${desktopIcon} $out/share/pixmaps/binaryninja.png
+      chmod +x $out/opt/binaryninja/binaryninja
+      buildPythonPath "$pythonDeps"
+      makeWrapper $out/opt/binaryninja/binaryninja $out/bin/binaryninja \
+        --prefix PYTHONPATH : "$program_PYTHONPATH" \
+        ${lib.optionalString forceWayland "--set QT_QPA_PLATFORM wayland"} \
+        ${
+          if useSystemQt then
+            ''"''${qtWrapperArgs[@]}"''
+          else
+            ''
+              --unset QML2_IMPORT_PATH \
+              --unset QML_IMPORT_PATH \
+              --unset QT_QPA_PLATFORM_PLUGIN_PATH \
+              --set QT_PLUGIN_PATH "$out/opt/binaryninja/qt"
+            ''
+        }
 
-    runHook postInstall
-  '';
+      runHook postInstall
+    '';
 
-  # libxml2 soname changes now follow ABI breaks.
-  # https://gitlab.gnome.org/GNOME/libxml2/-/issues/751
-  # This is of course ultimately good, but we can't recompile binja
-  # So let's just force it to use whatever NixOS has. It's Probably Fine™
-  preFixup = ''
-    patchelf $out/opt/binaryninja/plugins/lldb/lib/liblldb.so.* \
-      --replace-needed libxml2.so.2 libxml2.so
-  '';
+    runtimeDependencies = [ (lib.getLib openssl) ];
 
-  dontWrapQtApps = true;
-  meta = {
-    mainProgram = "binaryninja";
+    dontWrapQtApps = true;
+    meta = {
+      mainProgram = "binaryninja";
+      platforms = [
+        "x86_64-linux"
+        "aarch64-linux"
+      ];
+    };
   };
-}
+in
+if useFHS then
+  buildFHSEnv {
+    pname = "binary-ninja-${binaryNinjaEdition}-bundled-qt-fhs";
+    inherit (package) version meta;
+    executableName = "binaryninja";
+    targetPkgs = _: runtimeLibraries;
+    multiPkgs = _: [ ];
+    runScript = "${package}/bin/binaryninja";
+    extraInstallCommands = ''
+      ln -s ${package}/share "$out/share"
+    '';
+    passthru.unwrapped = package;
+  }
+else
+  package
