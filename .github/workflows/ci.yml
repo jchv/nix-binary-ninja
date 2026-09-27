@@ -34,7 +34,7 @@ jobs:
         run: nix build
         timeout-minutes: 20
       - name: Run `nix flake check`
-        run: nix flake check
+        run: nix flake check --max-jobs 1
         timeout-minutes: 20
       - name: Commit updated version
         run: |-
